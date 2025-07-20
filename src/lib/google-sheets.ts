@@ -4,11 +4,10 @@ import {
   Transaction,
   CashbookEntry,
   Investment,
-  InvestmentTransaction,
   Category,
   FinancialSummary,
 } from '@/types/financial';
-import { ApiResponse, SheetConfig, BatchUpdateRequest } from '@/types/api';
+import { SheetConfig } from '@/types/api';
 import { getCurrentFinancialYear } from './date-utils';
 
 export class GoogleSheetsService {
@@ -28,17 +27,28 @@ export class GoogleSheetsService {
   constructor() {
     const credentials = {
       client_email: process.env.GOOGLE_SHEETS_CLIENT_EMAIL,
-      private_key: process.env.GOOGLE_SHEETS_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      private_key: process.env.GOOGLE_SHEETS_PRIVATE_KEY,
     };
 
     this.spreadsheetId = process.env.GOOGLE_SHEET_ID!;
 
-    const auth = new google.auth.JWT(
-      credentials.client_email,
-      undefined,
-      credentials.private_key,
-      ['https://www.googleapis.com/auth/spreadsheets']
-    );
+    if (
+      !credentials.client_email ||
+      !credentials.private_key ||
+      !this.spreadsheetId
+    ) {
+      throw new Error('Missing required Google Sheets environment variables');
+    }
+
+    // Create JWT auth with additional options to handle OpenSSL issues
+    const auth = new google.auth.JWT({
+      email: credentials.client_email,
+      key: credentials.private_key,
+      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+    });
+
+    // Set additional options to handle OpenSSL compatibility
+    auth.defaultScopes = ['https://www.googleapis.com/auth/spreadsheets'];
 
     this.sheets = google.sheets({ version: 'v4', auth });
   }
@@ -184,6 +194,18 @@ export class GoogleSheetsService {
   // Accounts methods
   async getAccounts(financialYear?: string): Promise<Account[]> {
     try {
+      // Ensure the accounts sheet exists
+      await this.createSheetIfNotExists(this.sheetConfig.accountsSheet, [
+        'ID',
+        'Name',
+        'Type',
+        'SubType',
+        'Balance',
+        'IsActive',
+        'CreatedAt',
+        'FinancialYear',
+      ]);
+
       const range = `${this.sheetConfig.accountsSheet}!A2:H`;
       const response = await this.sheets.spreadsheets.values.get({
         spreadsheetId: this.spreadsheetId,
@@ -276,6 +298,21 @@ export class GoogleSheetsService {
   // Transactions methods
   async getTransactions(financialYear?: string): Promise<Transaction[]> {
     try {
+      // Ensure the transactions sheet exists
+      await this.createSheetIfNotExists(this.sheetConfig.transactionsSheet, [
+        'ID',
+        'Date',
+        'Description',
+        'Reference',
+        'TotalAmount',
+        'IsBalanced',
+        'Category',
+        'FinancialYear',
+        'CreatedAt',
+        'UpdatedAt',
+        'Entries',
+      ]);
+
       const range = `${this.sheetConfig.transactionsSheet}!A2:K`;
       const response = await this.sheets.spreadsheets.values.get({
         spreadsheetId: this.spreadsheetId,
@@ -339,6 +376,22 @@ export class GoogleSheetsService {
   // Cashbook methods
   async getCashbookEntries(financialYear?: string): Promise<CashbookEntry[]> {
     try {
+      // Ensure the cashbook sheet exists
+      await this.createSheetIfNotExists(this.sheetConfig.cashbookSheet, [
+        'ID',
+        'Date',
+        'Description',
+        'BankAccount',
+        'Type',
+        'Amount',
+        'Balance',
+        'Category',
+        'Reference',
+        'Reconciled',
+        'FinancialYear',
+        'CreatedAt',
+      ]);
+
       const range = `${this.sheetConfig.cashbookSheet}!A2:L`;
       const response = await this.sheets.spreadsheets.values.get({
         spreadsheetId: this.spreadsheetId,
@@ -364,6 +417,23 @@ export class GoogleSheetsService {
   // Investment methods
   async getInvestments(financialYear?: string): Promise<Investment[]> {
     try {
+      // Ensure the investments sheet exists
+      await this.createSheetIfNotExists(this.sheetConfig.investmentsSheet, [
+        'ID',
+        'Symbol',
+        'Name',
+        'Type',
+        'Quantity',
+        'AveragePrice',
+        'CurrentPrice',
+        'TotalInvestment',
+        'CurrentValue',
+        'GainLoss',
+        'GainLossPercentage',
+        'LastUpdated',
+        'FinancialYear',
+      ]);
+
       const range = `${this.sheetConfig.investmentsSheet}!A2:M`;
       const response = await this.sheets.spreadsheets.values.get({
         spreadsheetId: this.spreadsheetId,
@@ -423,6 +493,15 @@ export class GoogleSheetsService {
   // Categories methods
   async getCategories(): Promise<Category[]> {
     try {
+      // Ensure the categories sheet exists
+      await this.createSheetIfNotExists(this.sheetConfig.categoriesSheet, [
+        'ID',
+        'Name',
+        'Type',
+        'IsActive',
+        'CreatedAt',
+      ]);
+
       const range = `${this.sheetConfig.categoriesSheet}!A2:E`;
       const response = await this.sheets.spreadsheets.values.get({
         spreadsheetId: this.spreadsheetId,
@@ -442,6 +521,13 @@ export class GoogleSheetsService {
   // Dashboard methods
   async updateDashboardSummary(summary: FinancialSummary): Promise<void> {
     try {
+      // Ensure the dashboard sheet exists
+      await this.createSheetIfNotExists(this.sheetConfig.dashboardSheet, [
+        'Metric',
+        'Value',
+        'LastUpdated',
+      ]);
+
       const metrics = [
         ['Total Assets', summary.totalAssets, summary.lastUpdated],
         ['Total Liabilities', summary.totalLiabilities, summary.lastUpdated],

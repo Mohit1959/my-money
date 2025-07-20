@@ -109,3 +109,5 @@ Thumbs.db
 
 # Project documentation
 personal-finance-project.md
+.pre-commit-config.yaml
+trufflehog/

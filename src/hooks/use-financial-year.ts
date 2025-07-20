@@ -13,9 +13,6 @@ const notifyListeners = () => {
 };
 
 export function useFinancialYear() {
-  const [currentFinancialYear, setCurrentFinancialYear] = useState<string>(
-    getCurrentFinancialYear()
-  );
   const [selectedFinancialYear, setSelectedFinancialYear] = useState<string>(
     globalSelectedFinancialYear
   );
@@ -44,10 +41,9 @@ export function useFinancialYear() {
     notifyListeners();
   };
 
-  const isCurrentYear = selectedFinancialYear === currentFinancialYear;
+  const isCurrentYear = selectedFinancialYear === getCurrentFinancialYear();
 
   return {
-    currentFinancialYear,
     selectedFinancialYear,
     availableYears,
     switchFinancialYear,

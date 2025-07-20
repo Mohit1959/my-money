@@ -34,7 +34,6 @@ const DashboardPage: React.FC = () => {
   const { isAuthenticated, isLoading: authLoading } = useRequireAuth();
   const { selectedFinancialYear } = useFinancialYear();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const { accounts, isLoading: accountsLoading } = useAccounts(
