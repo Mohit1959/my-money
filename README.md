@@ -1,4 +1,4 @@
-# Personal Finance Manager
+# MoMoney
 
 A zero-cost, mobile-friendly personal finance management application built with Next.js that uses Google Sheets as the primary database. This solution provides comprehensive financial management capabilities while maintaining complete privacy and zero operational costs.
 
@@ -36,7 +36,7 @@ A zero-cost, mobile-friendly personal finance management application built with 
 
 ```bash
 git clone <your-repo-url>
-cd personal-finance
+cd my-money
 npm install
 ```
 
@@ -164,7 +164,7 @@ Your app will be available at `https://your-app-name.vercel.app`
 ## Project Structure
 
 ```
-personal-finance/
+my-money/
 ├── src/
 │   ├── app/                    # Next.js app router pages
 │   │   ├── api/               # API routes

@@ -43,9 +43,7 @@ const Header: React.FC = () => {
           <div className="flex items-center">
             <Link href="/" className="flex items-center">
               <div className="flex-shrink-0">
-                <h1 className="text-xl font-bold text-primary-600">
-                  Personal Finance
-                </h1>
+                <h1 className="text-xl font-bold text-primary-600">MoMoney</h1>
               </div>
             </Link>
           </div>

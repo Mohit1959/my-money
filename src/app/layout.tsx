@@ -5,10 +5,10 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Personal Finance Manager',
+  title: 'MoMoney',
   description: 'Zero-cost personal finance management using Google Sheets',
   keywords: ['finance', 'personal finance', 'budgeting', 'investment tracking'],
-  authors: [{ name: 'Personal Finance App' }],
+  authors: [{ name: 'MoMoney' }],
   viewport: 'width=device-width, initial-scale=1',
 };
 
