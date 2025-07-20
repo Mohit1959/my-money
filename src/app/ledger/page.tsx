@@ -1,6 +1,16 @@
 'use client';
 
 import React, { useState } from 'react';
+import {
+  Container,
+  Typography,
+  Box,
+  FormControl,
+  Select,
+  MenuItem,
+  Chip,
+  Paper,
+} from '@mui/material';
 import Header from '@/components/layout/header';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -43,10 +53,10 @@ const LedgerPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <Box sx={{ minHeight: '100vh', backgroundColor: 'grey.50' }}>
         <Header />
         <LoadingPage />
-      </div>
+      </Box>
     );
   }
 
@@ -64,58 +74,78 @@ const LedgerPage: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <Box sx={{ minHeight: '100vh', backgroundColor: 'grey.50' }}>
       <Header />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <Container maxWidth="xl" sx={{ py: 4 }}>
         {/* Page Header */}
-        <div className="mb-8 flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Ledger</h1>
-            <p className="text-gray-600">
+        <Box
+          sx={{
+            mb: 4,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <Box>
+            <Typography variant="h4" component="h1" gutterBottom>
+              Ledger
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
               Double-entry transaction management for FY {selectedFinancialYear}
-            </p>
-          </div>
+            </Typography>
+          </Box>
 
           <Button variant="primary">Add Transaction</Button>
-        </div>
+        </Box>
 
         {/* Filters */}
-        <Card className="mb-6">
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-4">
-              <label className="text-sm font-medium text-gray-700">
-                Account Filter:
-              </label>
-              <select
-                value={selectedAccount}
-                onChange={e => setSelectedAccount(e.target.value)}
-                className="px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+        <Card sx={{ mb: 3 }}>
+          <CardContent sx={{ p: 3 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Typography
+                variant="body2"
+                fontWeight="medium"
+                color="text.secondary"
               >
-                <option value="all">All Accounts</option>
-                {accounts.map(account => (
-                  <option key={account.id} value={account.id}>
-                    {account.name} ({account.type})
-                  </option>
-                ))}
-              </select>
-            </div>
+                Account Filter:
+              </Typography>
+              <FormControl size="small" sx={{ minWidth: 200 }}>
+                <Select
+                  value={selectedAccount}
+                  onChange={e => setSelectedAccount(e.target.value)}
+                >
+                  <MenuItem value="all">All Accounts</MenuItem>
+                  {accounts.map(account => (
+                    <MenuItem key={account.id} value={account.id}>
+                      {account.name} ({account.type})
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
           </CardContent>
         </Card>
 
         {/* Transactions Table */}
         <Card>
           <CardHeader>
-            <h3 className="text-lg font-medium text-gray-900">
+            <Typography variant="h6" component="h3">
               Transactions
               {selectedAccount !== 'all' && (
-                <span className="text-sm text-gray-500 font-normal">
+                <Typography
+                  component="span"
+                  variant="body2"
+                  color="text.secondary"
+                  fontWeight="normal"
+                >
+                  {' '}
                   - {accounts.find(acc => acc.id === selectedAccount)?.name}
-                </span>
+                </Typography>
               )}
-            </h3>
+            </Typography>
           </CardHeader>
-          <CardContent className="p-0">
+          <CardContent sx={{ p: 0 }}>
             {sortedTransactions.length > 0 ? (
               <Table>
                 <TableHeader>
@@ -134,23 +164,33 @@ const LedgerPage: React.FC = () => {
                     <TableRow key={transaction.id}>
                       <TableCell>{formatDate(transaction.date)}</TableCell>
                       <TableCell>
-                        <div>
-                          <p className="font-medium">
+                        <Box>
+                          <Typography variant="body2" fontWeight="medium">
                             {transaction.description}
-                          </p>
-                          <div className="text-xs text-gray-500 mt-1">
+                          </Typography>
+                          <Box sx={{ mt: 0.5 }}>
                             {transaction.entries.map((entry, index) => (
-                              <div key={index} className="flex justify-between">
-                                <span>{entry.accountName}</span>
-                                <span>
+                              <Box
+                                key={index}
+                                sx={{
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  fontSize: '0.75rem',
+                                  color: 'text.secondary',
+                                }}
+                              >
+                                <Typography variant="caption">
+                                  {entry.accountName}
+                                </Typography>
+                                <Typography variant="caption">
                                   {entry.debit > 0
                                     ? `Dr ${formatCurrency(entry.debit)}`
                                     : `Cr ${formatCurrency(entry.credit)}`}
-                                </span>
-                              </div>
+                                </Typography>
+                              </Box>
                             ))}
-                          </div>
-                        </div>
+                          </Box>
+                        </Box>
                       </TableCell>
                       <TableCell>{transaction.reference || '-'}</TableCell>
                       <TableCell>{transaction.category || '-'}</TableCell>
@@ -158,89 +198,117 @@ const LedgerPage: React.FC = () => {
                         {formatCurrency(transaction.totalAmount)}
                       </TableCell>
                       <TableCell>
-                        <span
-                          className={`status-badge ${
-                            transaction.isBalanced
-                              ? 'status-success'
-                              : 'status-error'
-                          }`}
-                        >
-                          {transaction.isBalanced ? 'Balanced' : 'Unbalanced'}
-                        </span>
+                        <Chip
+                          label={
+                            transaction.isBalanced ? 'Balanced' : 'Unbalanced'
+                          }
+                          color={transaction.isBalanced ? 'success' : 'error'}
+                          size="small"
+                          variant="outlined"
+                        />
                       </TableCell>
                       <TableCell>
-                        <div className="flex space-x-2">
+                        <Box sx={{ display: 'flex', gap: 1 }}>
                           <Button variant="outline" size="sm">
                             Edit
                           </Button>
                           <Button variant="outline" size="sm">
                             View
                           </Button>
-                        </div>
+                        </Box>
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             ) : (
-              <div className="p-8 text-center">
-                <p className="text-gray-500">No transactions found</p>
-                <p className="text-sm text-gray-400 mt-2">
+              <Box sx={{ p: 6, textAlign: 'center' }}>
+                <Typography color="text.secondary">
+                  No transactions found
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ mt: 1 }}
+                >
                   {selectedAccount !== 'all'
                     ? 'Try selecting a different account or create your first transaction'
                     : 'Create your first transaction to get started'}
-                </p>
-              </div>
+                </Typography>
+              </Box>
             )}
           </CardContent>
         </Card>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: '1fr',
+              md: 'repeat(3, 1fr)',
+            },
+            gap: 3,
+            mt: 3,
+          }}
+        >
           <Card>
-            <CardContent className="p-6">
-              <div className="text-center">
-                <p className="text-sm font-medium text-gray-500">
-                  Total Transactions
-                </p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {filteredTransactions.length}
-                </p>
-              </div>
+            <CardContent sx={{ p: 4, textAlign: 'center' }}>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                fontWeight="medium"
+              >
+                Total Transactions
+              </Typography>
+              <Typography variant="h4" component="div" fontWeight="bold">
+                {filteredTransactions.length}
+              </Typography>
             </CardContent>
           </Card>
 
           <Card>
-            <CardContent className="p-6">
-              <div className="text-center">
-                <p className="text-sm font-medium text-gray-500">
-                  Balanced Transactions
-                </p>
-                <p className="text-2xl font-bold text-green-600">
-                  {filteredTransactions.filter(t => t.isBalanced).length}
-                </p>
-              </div>
+            <CardContent sx={{ p: 4, textAlign: 'center' }}>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                fontWeight="medium"
+              >
+                Balanced Transactions
+              </Typography>
+              <Typography
+                variant="h4"
+                component="div"
+                fontWeight="bold"
+                color="success.main"
+              >
+                {filteredTransactions.filter(t => t.isBalanced).length}
+              </Typography>
             </CardContent>
           </Card>
 
           <Card>
-            <CardContent className="p-6">
-              <div className="text-center">
-                <p className="text-sm font-medium text-gray-500">Total Value</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {formatCurrency(
-                    filteredTransactions.reduce(
-                      (sum, t) => sum + t.totalAmount,
-                      0
-                    )
-                  )}
-                </p>
-              </div>
+            <CardContent sx={{ p: 4, textAlign: 'center' }}>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                fontWeight="medium"
+              >
+                Total Value
+              </Typography>
+              <Typography variant="h4" component="div" fontWeight="bold">
+                {formatCurrency(
+                  filteredTransactions.reduce(
+                    (sum, t) => sum + t.totalAmount,
+                    0
+                  )
+                )}
+              </Typography>
             </CardContent>
           </Card>
-        </div>
-      </main>
-    </div>
+        </Box>
+      </Container>
+    </Box>
   );
 };
 

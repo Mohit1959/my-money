@@ -1,6 +1,11 @@
 'use client';
 
 import React from 'react';
+import { Container, Typography, Box, Paper, Chip } from '@mui/material';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import TrendingDownIcon from '@mui/icons-material/TrendingDown';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import Header from '@/components/layout/header';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { LoadingPage } from '@/components/ui/loading';
@@ -44,10 +49,10 @@ const DashboardPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <Box sx={{ minHeight: '100vh', backgroundColor: 'grey.50' }}>
         <Header />
         <LoadingPage />
-      </div>
+      </Box>
     );
   }
 
@@ -70,99 +75,160 @@ const DashboardPage: React.FC = () => {
       title: 'Net Worth',
       value: formatCurrency(netWorthData.netWorth),
       description: 'Total assets minus liabilities',
-      color: netWorthData.netWorth >= 0 ? 'text-green-600' : 'text-red-600',
+      color: netWorthData.netWorth >= 0 ? 'success.main' : 'error.main',
+      icon:
+        netWorthData.netWorth >= 0 ? <TrendingUpIcon /> : <TrendingDownIcon />,
     },
     {
       title: 'Total Assets',
       value: formatCurrency(netWorthData.totalAssets),
       description: 'All asset accounts',
-      color: 'text-blue-600',
+      color: 'info.main',
+      icon: <AccountBalanceIcon />,
     },
     {
       title: 'Investment Value',
       value: formatCurrency(portfolioData.currentValue),
       description: 'Current portfolio value',
-      color:
-        portfolioData.totalGainLoss >= 0 ? 'text-green-600' : 'text-red-600',
+      color: portfolioData.totalGainLoss >= 0 ? 'success.main' : 'error.main',
+      icon:
+        portfolioData.totalGainLoss >= 0 ? (
+          <TrendingUpIcon />
+        ) : (
+          <TrendingDownIcon />
+        ),
     },
     {
       title: 'Cash Balance',
       value: formatCurrency(totalCash),
       description: 'Available cash',
-      color: 'text-primary-600',
+      color: 'primary.main',
+      icon: <AttachMoneyIcon />,
     },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <Box sx={{ minHeight: '100vh', backgroundColor: 'grey.50' }}>
       <Header />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <Container maxWidth="xl" sx={{ py: 4 }}>
         {/* Page Title */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600">
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h4" component="h1" gutterBottom>
+            Dashboard
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
             Overview of your financial health for FY {selectedFinancialYear}
-          </p>
-        </div>
+          </Typography>
+        </Box>
 
         {/* Metrics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: '1fr',
+              sm: 'repeat(2, 1fr)',
+              md: 'repeat(4, 1fr)',
+            },
+            gap: 3,
+            mb: 4,
+          }}
+        >
           {metrics.map((metric, index) => (
             <Card key={index}>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-500">
+              <CardContent>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <Box>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      gutterBottom
+                    >
                       {metric.title}
-                    </p>
-                    <p className={`text-2xl font-bold ${metric.color}`}>
+                    </Typography>
+                    <Typography
+                      variant="h4"
+                      component="div"
+                      sx={{ color: metric.color, fontWeight: 'bold' }}
+                    >
                       {metric.value}
-                    </p>
-                    <p className="text-xs text-gray-400 mt-1">
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      sx={{ mt: 0.5 }}
+                    >
                       {metric.description}
-                    </p>
-                  </div>
-                </div>
+                    </Typography>
+                  </Box>
+                  <Box sx={{ color: metric.color }}>{metric.icon}</Box>
+                </Box>
               </CardContent>
             </Card>
           ))}
-        </div>
+        </Box>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', lg: 'repeat(2, 1fr)' },
+            gap: 4,
+          }}
+        >
           {/* Recent Transactions */}
           <Card>
             <CardHeader>
-              <h3 className="text-lg font-medium text-gray-900">
+              <Typography variant="h6" component="h3">
                 Recent Transactions
-              </h3>
+              </Typography>
             </CardHeader>
             <CardContent>
               {recentTransactions.length > 0 ? (
-                <div className="space-y-4">
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                   {recentTransactions.map(transaction => (
-                    <div
+                    <Box
                       key={transaction.id}
-                      className="flex justify-between items-center py-2 border-b border-gray-100 last:border-b-0"
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        py: 1,
+                        borderBottom: '1px solid',
+                        borderColor: 'grey.100',
+                        '&:last-child': {
+                          borderBottom: 'none',
+                        },
+                      }}
                     >
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
+                      <Box>
+                        <Typography variant="body2" fontWeight="medium">
                           {transaction.description}
-                        </p>
-                        <p className="text-xs text-gray-500">
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
                           {new Date(transaction.date).toLocaleDateString()}
-                        </p>
-                      </div>
-                      <p className="text-sm font-medium text-gray-900">
+                        </Typography>
+                      </Box>
+                      <Typography variant="body2" fontWeight="medium">
                         {formatCurrency(transaction.totalAmount)}
-                      </p>
-                    </div>
+                      </Typography>
+                    </Box>
                   ))}
-                </div>
+                </Box>
               ) : (
-                <p className="text-gray-500 text-center py-8">
+                <Typography
+                  color="text.secondary"
+                  align="center"
+                  sx={{ py: 4 }}
+                >
                   No transactions found
-                </p>
+                </Typography>
               )}
             </CardContent>
           </Card>
@@ -170,94 +236,123 @@ const DashboardPage: React.FC = () => {
           {/* Investment Performance */}
           <Card>
             <CardHeader>
-              <h3 className="text-lg font-medium text-gray-900">
+              <Typography variant="h6" component="h3">
                 Investment Performance
-              </h3>
+              </Typography>
             </CardHeader>
             <CardContent>
               {investments.length > 0 ? (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
-                    <div>
-                      <p className="text-xs text-gray-500">Total Investment</p>
-                      <p className="text-lg font-semibold">
-                        {formatCurrency(portfolioData.totalInvestment)}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500">Current Value</p>
-                      <p className="text-lg font-semibold">
-                        {formatCurrency(portfolioData.currentValue)}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500">Gain/Loss</p>
-                      <p
-                        className={`text-lg font-semibold ${
-                          portfolioData.totalGainLoss >= 0
-                            ? 'text-green-600'
-                            : 'text-red-600'
-                        }`}
-                      >
-                        {formatCurrency(portfolioData.totalGainLoss)}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500">Return %</p>
-                      <p
-                        className={`text-lg font-semibold ${
-                          portfolioData.totalGainLossPercentage >= 0
-                            ? 'text-green-600'
-                            : 'text-red-600'
-                        }`}
-                      >
-                        {portfolioData.totalGainLossPercentage.toFixed(2)}%
-                      </p>
-                    </div>
-                  </div>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                  <Paper sx={{ p: 2, backgroundColor: 'grey.50' }}>
+                    <Box
+                      sx={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(2, 1fr)',
+                        gap: 2,
+                      }}
+                    >
+                      <Box>
+                        <Typography variant="caption" color="text.secondary">
+                          Total Investment
+                        </Typography>
+                        <Typography variant="h6" fontWeight="semibold">
+                          {formatCurrency(portfolioData.totalInvestment)}
+                        </Typography>
+                      </Box>
+                      <Box>
+                        <Typography variant="caption" color="text.secondary">
+                          Current Value
+                        </Typography>
+                        <Typography variant="h6" fontWeight="semibold">
+                          {formatCurrency(portfolioData.currentValue)}
+                        </Typography>
+                      </Box>
+                      <Box>
+                        <Typography variant="caption" color="text.secondary">
+                          Gain/Loss
+                        </Typography>
+                        <Typography
+                          variant="h6"
+                          fontWeight="semibold"
+                          color={
+                            portfolioData.totalGainLoss >= 0
+                              ? 'success.main'
+                              : 'error.main'
+                          }
+                        >
+                          {formatCurrency(portfolioData.totalGainLoss)}
+                        </Typography>
+                      </Box>
+                      <Box>
+                        <Typography variant="caption" color="text.secondary">
+                          Return %
+                        </Typography>
+                        <Typography
+                          variant="h6"
+                          fontWeight="semibold"
+                          color={
+                            portfolioData.totalGainLossPercentage >= 0
+                              ? 'success.main'
+                              : 'error.main'
+                          }
+                        >
+                          {portfolioData.totalGainLossPercentage.toFixed(2)}%
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Paper>
 
-                  <div className="space-y-2">
+                  <Box
+                    sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}
+                  >
                     {investments.slice(0, 5).map(investment => (
-                      <div
+                      <Box
                         key={investment.id}
-                        className="flex justify-between items-center"
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
                       >
-                        <div>
-                          <p className="text-sm font-medium">
+                        <Box>
+                          <Typography variant="body2" fontWeight="medium">
                             {investment.symbol}
-                          </p>
-                          <p className="text-xs text-gray-500">
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
                             {investment.name}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-sm font-medium">
+                          </Typography>
+                        </Box>
+                        <Box sx={{ textAlign: 'right' }}>
+                          <Typography variant="body2" fontWeight="medium">
                             {formatCurrency(investment.currentValue)}
-                          </p>
-                          <p
-                            className={`text-xs ${
-                              investment.gainLoss >= 0
-                                ? 'text-green-600'
-                                : 'text-red-600'
-                            }`}
-                          >
-                            {investment.gainLossPercentage.toFixed(2)}%
-                          </p>
-                        </div>
-                      </div>
+                          </Typography>
+                          <Chip
+                            label={`${investment.gainLossPercentage.toFixed(2)}%`}
+                            size="small"
+                            color={
+                              investment.gainLoss >= 0 ? 'success' : 'error'
+                            }
+                            variant="outlined"
+                          />
+                        </Box>
+                      </Box>
                     ))}
-                  </div>
-                </div>
+                  </Box>
+                </Box>
               ) : (
-                <p className="text-gray-500 text-center py-8">
+                <Typography
+                  color="text.secondary"
+                  align="center"
+                  sx={{ py: 4 }}
+                >
                   No investments found
-                </p>
+                </Typography>
               )}
             </CardContent>
           </Card>
-        </div>
-      </main>
-    </div>
+        </Box>
+      </Container>
+    </Box>
   );
 };
 

@@ -1,69 +1,69 @@
 import React from 'react';
-import { cn } from '@/lib/utils';
+import {
+  Card as MuiCard,
+  CardProps as MuiCardProps,
+  CardHeader as MuiCardHeader,
+  CardHeaderProps as MuiCardHeaderProps,
+  CardContent as MuiCardContent,
+  CardContentProps as MuiCardContentProps,
+  CardActions as MuiCardActions,
+  CardActionsProps as MuiCardActionsProps,
+} from '@mui/material';
 
-interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+interface CardProps extends MuiCardProps {
   children: React.ReactNode;
 }
 
-interface CardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
+interface CardHeaderProps extends MuiCardHeaderProps {
   children: React.ReactNode;
 }
 
-interface CardContentProps extends React.HTMLAttributes<HTMLDivElement> {
+interface CardContentProps extends MuiCardContentProps {
   children: React.ReactNode;
 }
 
-interface CardFooterProps extends React.HTMLAttributes<HTMLDivElement> {
+interface CardFooterProps extends MuiCardActionsProps {
   children: React.ReactNode;
 }
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ className, children, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(
-        'bg-white rounded-lg shadow-md border border-gray-200',
-        className
-      )}
-      {...props}
-    >
+  ({ children, ...props }, ref) => (
+    <MuiCard ref={ref} {...props}>
       {children}
-    </div>
+    </MuiCard>
   )
 );
 
 const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(
-  ({ className, children, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn('px-6 py-4 border-b border-gray-200', className)}
-      {...props}
-    >
+  ({ children, ...props }, ref) => (
+    <MuiCardHeader ref={ref} {...props}>
       {children}
-    </div>
+    </MuiCardHeader>
   )
 );
 
 const CardContent = React.forwardRef<HTMLDivElement, CardContentProps>(
-  ({ className, children, ...props }, ref) => (
-    <div ref={ref} className={cn('px-6 py-4', className)} {...props}>
+  ({ children, ...props }, ref) => (
+    <MuiCardContent ref={ref} {...props}>
       {children}
-    </div>
+    </MuiCardContent>
   )
 );
 
 const CardFooter = React.forwardRef<HTMLDivElement, CardFooterProps>(
-  ({ className, children, ...props }, ref) => (
-    <div
+  ({ children, ...props }, ref) => (
+    <MuiCardActions
       ref={ref}
-      className={cn(
-        'px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-lg',
-        className
-      )}
+      sx={{
+        borderTop: '1px solid',
+        borderColor: 'grey.200',
+        backgroundColor: 'grey.50',
+        padding: 2,
+      }}
       {...props}
     >
       {children}
-    </div>
+    </MuiCardActions>
   )
 );
 

@@ -388,6 +388,38 @@ export class GoogleSheetsService {
     }
   }
 
+  async createInvestment(
+    investment: Omit<Investment, 'id' | 'lastUpdated' | 'financialYear'>
+  ): Promise<Investment> {
+    try {
+      const id = this.generateId();
+      const now = new Date().toISOString();
+      const financialYear = getCurrentFinancialYear();
+
+      const newInvestment: Investment = {
+        ...investment,
+        id,
+        lastUpdated: now,
+        financialYear,
+      };
+
+      const values = this.formatInvestmentRow(newInvestment);
+      await this.sheets.spreadsheets.values.append({
+        spreadsheetId: this.spreadsheetId,
+        range: `${this.sheetConfig.investmentsSheet}!A:M`,
+        valueInputOption: 'RAW',
+        requestBody: {
+          values: [values],
+        },
+      });
+
+      return newInvestment;
+    } catch (error) {
+      console.error('Error creating investment:', error);
+      throw error;
+    }
+  }
+
   // Categories methods
   async getCategories(): Promise<Category[]> {
     try {
@@ -546,6 +578,24 @@ export class GoogleSheetsService {
       transaction.createdAt,
       transaction.updatedAt,
       JSON.stringify(transaction.entries),
+    ];
+  }
+
+  private formatInvestmentRow(investment: Investment): any[] {
+    return [
+      investment.id,
+      investment.symbol,
+      investment.name,
+      investment.type,
+      investment.quantity,
+      investment.averagePrice,
+      investment.currentPrice,
+      investment.totalInvestment,
+      investment.currentValue,
+      investment.gainLoss,
+      investment.gainLossPercentage,
+      investment.lastUpdated,
+      investment.financialYear,
     ];
   }
 

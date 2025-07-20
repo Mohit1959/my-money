@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Box, Container, Typography } from '@mui/material';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
@@ -33,55 +34,78 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            MoMoney
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Enter your password to access your financial data
-          </p>
-        </div>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'grey.50',
+        py: 6,
+        px: { xs: 2, sm: 3, lg: 4 },
+      }}
+    >
+      <Container maxWidth="sm">
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <Box sx={{ textAlign: 'center' }}>
+            <Typography
+              variant="h3"
+              component="h1"
+              fontWeight="bold"
+              gutterBottom
+            >
+              MoMoney
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              Enter your password to access your financial data
+            </Typography>
+          </Box>
 
-        <Card>
-          <CardHeader>
-            <h3 className="text-lg font-medium text-gray-900">Sign In</h3>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <Input
-                type="password"
-                label="Password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                error={error}
-                placeholder="Enter your password"
-                required
-                autoFocus
-              />
-
-              <Button
-                type="submit"
-                variant="primary"
-                size="lg"
-                isLoading={isLoading}
-                className="w-full"
+          <Card>
+            <CardHeader>
+              <Typography variant="h6" component="h2">
+                Sign In
+              </Typography>
+            </CardHeader>
+            <CardContent>
+              <Box
+                component="form"
+                onSubmit={handleSubmit}
+                sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}
               >
-                {isLoading ? 'Signing in...' : 'Sign In'}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+                <Input
+                  type="password"
+                  label="Password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  error={error}
+                  placeholder="Enter your password"
+                  required
+                  autoFocus
+                />
 
-        <div className="text-center">
-          <p className="text-xs text-gray-500">
-            This application uses Google Sheets for data storage. Make sure you
-            have configured your environment variables correctly.
-          </p>
-        </div>
-      </div>
-    </div>
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="lg"
+                  isLoading={isLoading}
+                  fullWidth
+                >
+                  {isLoading ? 'Signing in...' : 'Sign In'}
+                </Button>
+              </Box>
+            </CardContent>
+          </Card>
+
+          <Box sx={{ textAlign: 'center' }}>
+            <Typography variant="caption" color="text.secondary">
+              This application uses Google Sheets for data storage. Make sure
+              you have configured your environment variables correctly.
+            </Typography>
+          </Box>
+        </Box>
+      </Container>
+    </Box>
   );
 };
 

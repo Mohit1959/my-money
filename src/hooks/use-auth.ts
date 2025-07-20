@@ -13,7 +13,11 @@ export function useAuth() {
 
   const checkSession = async () => {
     try {
-      const response = await fetch('/api/auth/session');
+      const response = await fetch('/api/auth/session', {
+        method: 'GET',
+        credentials: 'include',
+      });
+
       if (response.ok) {
         const sessionData = await response.json();
         setSession(sessionData);
@@ -37,6 +41,7 @@ export function useAuth() {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ password }),
       });
 
@@ -59,6 +64,7 @@ export function useAuth() {
     try {
       await fetch('/api/auth/logout', {
         method: 'POST',
+        credentials: 'include',
       });
       setSession(null);
       router.push('/login');
