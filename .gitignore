@@ -106,3 +106,6 @@ Thumbs.db
 
 # Local Netlify folder
 .netlify
+
+# Project documentation
+personal-finance-project.md
