@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { useRouter, usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import {
   AppBar,
   Toolbar,
@@ -21,8 +21,10 @@ import {
   IconButton,
   useTheme,
   useMediaQuery,
+  Stack,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
 import { Button as CustomButton } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
 import { useFinancialYear } from '@/hooks/use-financial-year';
@@ -31,10 +33,10 @@ const Header: React.FC = () => {
   const { logout } = useAuth();
   const { selectedFinancialYear, availableYears, switchFinancialYear } =
     useFinancialYear();
-  const router = useRouter();
   const pathname = usePathname();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
   const handleLogout = async () => {
@@ -63,21 +65,106 @@ const Header: React.FC = () => {
   };
 
   const drawer = (
-    <Box>
-      <List>
-        {navigation.map(item => (
-          <ListItem key={item.name} disablePadding>
-            <ListItemButton
-              component={Link}
-              href={item.href}
-              selected={item.current}
-              onClick={handleDrawerToggle}
+    <Box
+      sx={{
+        width: 280,
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      {/* Drawer Header */}
+      <Box sx={{ p: 2, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Link href="/" style={{ textDecoration: 'none' }}>
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: 700,
+                color: 'primary.main',
+                textDecoration: 'none',
+              }}
             >
-              <ListItemText primary={item.name} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
+              MoMoney
+            </Typography>
+          </Link>
+          <IconButton onClick={handleDrawerToggle} size="small">
+            <CloseIcon />
+          </IconButton>
+        </Box>
+      </Box>
+
+      {/* Financial Year Selector in Drawer */}
+      <Box sx={{ p: 2, borderBottom: '1px solid', borderColor: 'grey.200' }}>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+          Financial Year
+        </Typography>
+        <FormControl fullWidth size="small">
+          <Select
+            value={selectedFinancialYear}
+            onChange={e => switchFinancialYear(e.target.value)}
+            sx={{ height: 40 }}
+          >
+            {availableYears.map(year => (
+              <MenuItem key={year} value={year}>
+                FY {year}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Box>
+
+      {/* Navigation Menu */}
+      <Box sx={{ flex: 1, overflow: 'auto' }}>
+        <List sx={{ pt: 1 }}>
+          {navigation.map(item => (
+            <ListItem key={item.name} disablePadding>
+              <ListItemButton
+                component={Link}
+                href={item.href}
+                selected={item.current}
+                onClick={handleDrawerToggle}
+                sx={{
+                  mx: 1,
+                  borderRadius: 1,
+                  '&.Mui-selected': {
+                    backgroundColor: 'primary.50',
+                    color: 'primary.main',
+                    '&:hover': {
+                      backgroundColor: 'primary.100',
+                    },
+                  },
+                }}
+              >
+                <ListItemText
+                  primary={item.name}
+                  primaryTypographyProps={{
+                    fontWeight: item.current ? 600 : 400,
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+      </Box>
+
+      {/* Logout Button in Drawer */}
+      <Box sx={{ p: 2, borderTop: '1px solid', borderColor: 'grey.200' }}>
+        <CustomButton
+          variant="outline"
+          fullWidth
+          onClick={handleLogout}
+          sx={{ height: 40 }}
+        >
+          Logout
+        </CustomButton>
+      </Box>
     </Box>
   );
 
@@ -93,12 +180,18 @@ const Header: React.FC = () => {
         }}
       >
         <Container maxWidth="xl">
-          <Toolbar sx={{ justifyContent: 'space-between', height: 64 }}>
+          <Toolbar
+            sx={{
+              justifyContent: 'space-between',
+              height: { xs: 56, md: 64 },
+              px: { xs: 1, sm: 2 },
+            }}
+          >
             {/* Logo */}
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <Link href="/" style={{ textDecoration: 'none' }}>
                 <Typography
-                  variant="h6"
+                  variant={isSmallMobile ? 'body1' : 'h6'}
                   sx={{
                     fontWeight: 700,
                     color: 'primary.main',
@@ -112,7 +205,7 @@ const Header: React.FC = () => {
 
             {/* Desktop Navigation */}
             {!isMobile && (
-              <Box sx={{ display: 'flex', gap: 2 }}>
+              <Box sx={{ display: 'flex', gap: 1 }}>
                 {navigation.map(item => (
                   <Button
                     key={item.name}
@@ -120,6 +213,7 @@ const Header: React.FC = () => {
                     href={item.href}
                     variant={item.current ? 'contained' : 'text'}
                     color={item.current ? 'primary' : 'inherit'}
+                    size="small"
                     sx={{
                       textTransform: 'none',
                       backgroundColor: item.current
@@ -140,26 +234,38 @@ const Header: React.FC = () => {
             )}
 
             {/* Right side controls */}
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              {/* Financial Year Selector */}
-              <FormControl size="small" sx={{ minWidth: 120 }}>
-                <Select
-                  value={selectedFinancialYear}
-                  onChange={e => switchFinancialYear(e.target.value)}
-                  sx={{ height: 40 }}
+            <Stack direction="row" spacing={1} alignItems="center">
+              {/* Financial Year Selector - Hidden on very small screens */}
+              {!isSmallMobile && (
+                <FormControl
+                  size="small"
+                  sx={{ minWidth: { xs: 100, sm: 120 } }}
                 >
-                  {availableYears.map(year => (
-                    <MenuItem key={year} value={year}>
-                      FY {year}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+                  <Select
+                    value={selectedFinancialYear}
+                    onChange={e => switchFinancialYear(e.target.value)}
+                    sx={{ height: 36 }}
+                  >
+                    {availableYears.map(year => (
+                      <MenuItem key={year} value={year}>
+                        FY {year}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
 
-              {/* Logout Button */}
-              <CustomButton variant="outline" size="sm" onClick={handleLogout}>
-                Logout
-              </CustomButton>
+              {/* Logout Button - Hidden on mobile (shown in drawer) */}
+              {!isMobile && (
+                <CustomButton
+                  variant="outline"
+                  size="sm"
+                  onClick={handleLogout}
+                  sx={{ height: 36 }}
+                >
+                  Logout
+                </CustomButton>
+              )}
 
               {/* Mobile menu button */}
               {isMobile && (
@@ -168,12 +274,15 @@ const Header: React.FC = () => {
                   aria-label="open drawer"
                   edge="start"
                   onClick={handleDrawerToggle}
-                  sx={{ ml: 1 }}
+                  sx={{
+                    ml: 1,
+                    color: 'text.primary',
+                  }}
                 >
                   <MenuIcon />
                 </IconButton>
               )}
-            </Box>
+            </Stack>
           </Toolbar>
         </Container>
       </AppBar>
@@ -191,7 +300,7 @@ const Header: React.FC = () => {
           display: { xs: 'block', md: 'none' },
           '& .MuiDrawer-paper': {
             boxSizing: 'border-box',
-            width: 240,
+            width: 280,
           },
         }}
       >

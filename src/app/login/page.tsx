@@ -2,7 +2,13 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Box, Container, Typography } from '@mui/material';
+import {
+  Box,
+  Container,
+  Typography,
+  useTheme,
+  useMediaQuery,
+} from '@mui/material';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
@@ -14,6 +20,8 @@ const LoginPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const router = useRouter();
+  const theme = useTheme();
+  const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,37 +49,69 @@ const LoginPage: React.FC = () => {
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: 'grey.50',
-        py: 6,
-        px: { xs: 2, sm: 3, lg: 4 },
+        py: { xs: 2, sm: 4, lg: 6 },
+        px: { xs: 1, sm: 2, lg: 4 },
       }}
     >
       <Container maxWidth="sm">
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: { xs: 3, sm: 4 },
+          }}
+        >
           <Box sx={{ textAlign: 'center' }}>
             <Typography
-              variant="h3"
+              variant={isSmallMobile ? 'h4' : 'h3'}
               component="h1"
               fontWeight="bold"
               gutterBottom
+              sx={{
+                fontSize: { xs: '1.75rem', sm: '2.25rem' },
+                mb: { xs: 1, sm: 2 },
+              }}
             >
               MoMoney
             </Typography>
-            <Typography variant="body1" color="text.secondary">
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              sx={{
+                fontSize: { xs: '0.875rem', sm: '1rem' },
+                px: { xs: 1, sm: 0 },
+              }}
+            >
               Enter your password to access your financial data
             </Typography>
           </Box>
 
           <Card>
-            <CardHeader>
-              <Typography variant="h6" component="h2">
+            <CardHeader
+              sx={{
+                pb: { xs: 1, sm: 2 },
+                '& .MuiCardHeader-content': {
+                  minWidth: 0,
+                },
+              }}
+            >
+              <Typography
+                variant={isSmallMobile ? 'h6' : 'h6'}
+                component="h2"
+                sx={{ fontWeight: 600 }}
+              >
                 Sign In
               </Typography>
             </CardHeader>
-            <CardContent>
+            <CardContent sx={{ pt: 0 }}>
               <Box
                 component="form"
                 onSubmit={handleSubmit}
-                sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: { xs: 2, sm: 3 },
+                }}
               >
                 <Input
                   type="password"
@@ -90,6 +130,10 @@ const LoginPage: React.FC = () => {
                   size="lg"
                   isLoading={isLoading}
                   fullWidth
+                  sx={{
+                    height: { xs: 44, sm: 48 },
+                    fontSize: { xs: '0.9rem', sm: '1rem' },
+                  }}
                 >
                   {isLoading ? 'Signing in...' : 'Sign In'}
                 </Button>
@@ -98,7 +142,15 @@ const LoginPage: React.FC = () => {
           </Card>
 
           <Box sx={{ textAlign: 'center' }}>
-            <Typography variant="caption" color="text.secondary">
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{
+                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                px: { xs: 1, sm: 0 },
+                lineHeight: 1.5,
+              }}
+            >
               This application uses Google Sheets for data storage. Make sure
               you have configured your environment variables correctly.
             </Typography>

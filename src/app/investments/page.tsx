@@ -9,6 +9,10 @@ import {
   Select,
   MenuItem,
   Chip,
+  useTheme,
+  useMediaQuery,
+  Stack,
+  Paper,
 } from '@mui/material';
 import Header from '@/components/layout/header';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
@@ -31,6 +35,9 @@ import { calculatePortfolioValue } from '@/lib/financial-calculations';
 const InvestmentsPage: React.FC = () => {
   const { isAuthenticated, isLoading: authLoading } = useRequireAuth();
   const { selectedFinancialYear } = useFinancialYear();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const { investments, isLoading: investmentsLoading } = useInvestments(
     selectedFinancialYear
@@ -71,26 +78,48 @@ const InvestmentsPage: React.FC = () => {
     <Box sx={{ minHeight: '100vh', backgroundColor: 'grey.50' }}>
       <Header />
 
-      <Container maxWidth="xl" sx={{ py: 4 }}>
+      <Container
+        maxWidth="xl"
+        sx={{ py: { xs: 2, md: 4 }, px: { xs: 1, sm: 2 } }}
+      >
         {/* Page Header */}
         <Box
           sx={{
-            mb: 4,
+            mb: { xs: 3, md: 4 },
             display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' },
             justifyContent: 'space-between',
-            alignItems: 'center',
+            alignItems: { xs: 'stretch', sm: 'center' },
+            gap: { xs: 2, sm: 0 },
           }}
         >
           <Box>
-            <Typography variant="h4" component="h1" gutterBottom>
+            <Typography
+              variant={isSmallMobile ? 'h5' : 'h4'}
+              component="h1"
+              gutterBottom
+              sx={{ fontWeight: 600 }}
+            >
               Investments
             </Typography>
-            <Typography variant="body1" color="text.secondary">
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}
+            >
               Portfolio management for FY {selectedFinancialYear}
             </Typography>
           </Box>
 
-          <Button variant="primary">Add Investment</Button>
+          <Button
+            variant="primary"
+            sx={{
+              alignSelf: { xs: 'stretch', sm: 'flex-start' },
+              height: { xs: 40, md: 44 },
+            }}
+          >
+            Add Investment
+          </Button>
         </Box>
 
         {/* Portfolio Summary */}
@@ -99,41 +128,53 @@ const InvestmentsPage: React.FC = () => {
             display: 'grid',
             gridTemplateColumns: {
               xs: '1fr',
+              sm: 'repeat(2, 1fr)',
               md: 'repeat(4, 1fr)',
             },
-            gap: 3,
-            mb: 4,
+            gap: { xs: 2, md: 3 },
+            mb: { xs: 3, md: 4 },
           }}
         >
           <Card>
-            <CardContent sx={{ p: 4, textAlign: 'center' }}>
+            <CardContent sx={{ p: { xs: 2, md: 3 } }}>
               <Typography
                 variant="body2"
                 color="text.secondary"
-                fontWeight="medium"
+                gutterBottom
+                sx={{ fontSize: { xs: '0.75rem', md: '0.875rem' } }}
               >
                 Total Investment
               </Typography>
-              <Typography variant="h4" component="div" fontWeight="bold">
+              <Typography
+                variant={isSmallMobile ? 'h6' : 'h4'}
+                component="div"
+                sx={{
+                  fontWeight: 'bold',
+                  fontSize: { xs: '1.125rem', sm: '1.25rem', md: '1.5rem' },
+                }}
+              >
                 {formatCurrency(portfolioData.totalInvestment)}
               </Typography>
             </CardContent>
           </Card>
 
           <Card>
-            <CardContent sx={{ p: 4, textAlign: 'center' }}>
+            <CardContent sx={{ p: { xs: 2, md: 3 } }}>
               <Typography
                 variant="body2"
                 color="text.secondary"
-                fontWeight="medium"
+                gutterBottom
+                sx={{ fontSize: { xs: '0.75rem', md: '0.875rem' } }}
               >
                 Current Value
               </Typography>
               <Typography
-                variant="h4"
+                variant={isSmallMobile ? 'h6' : 'h4'}
                 component="div"
-                fontWeight="bold"
-                color="primary.main"
+                sx={{
+                  fontWeight: 'bold',
+                  fontSize: { xs: '1.125rem', sm: '1.25rem', md: '1.5rem' },
+                }}
               >
                 {formatCurrency(portfolioData.currentValue)}
               </Typography>
@@ -141,23 +182,26 @@ const InvestmentsPage: React.FC = () => {
           </Card>
 
           <Card>
-            <CardContent sx={{ p: 4, textAlign: 'center' }}>
+            <CardContent sx={{ p: { xs: 2, md: 3 } }}>
               <Typography
                 variant="body2"
                 color="text.secondary"
-                fontWeight="medium"
+                gutterBottom
+                sx={{ fontSize: { xs: '0.75rem', md: '0.875rem' } }}
               >
                 Total Gain/Loss
               </Typography>
               <Typography
-                variant="h4"
+                variant={isSmallMobile ? 'h6' : 'h4'}
                 component="div"
-                fontWeight="bold"
-                color={
-                  portfolioData.totalGainLoss >= 0
-                    ? 'success.main'
-                    : 'error.main'
-                }
+                sx={{
+                  fontWeight: 'bold',
+                  color:
+                    portfolioData.totalGainLoss >= 0
+                      ? 'success.main'
+                      : 'error.main',
+                  fontSize: { xs: '1.125rem', sm: '1.25rem', md: '1.5rem' },
+                }}
               >
                 {formatCurrency(portfolioData.totalGainLoss)}
               </Typography>
@@ -165,23 +209,26 @@ const InvestmentsPage: React.FC = () => {
           </Card>
 
           <Card>
-            <CardContent sx={{ p: 4, textAlign: 'center' }}>
+            <CardContent sx={{ p: { xs: 2, md: 3 } }}>
               <Typography
                 variant="body2"
                 color="text.secondary"
-                fontWeight="medium"
+                gutterBottom
+                sx={{ fontSize: { xs: '0.75rem', md: '0.875rem' } }}
               >
                 Return %
               </Typography>
               <Typography
-                variant="h4"
+                variant={isSmallMobile ? 'h6' : 'h4'}
                 component="div"
-                fontWeight="bold"
-                color={
-                  portfolioData.totalGainLossPercentage >= 0
-                    ? 'success.main'
-                    : 'error.main'
-                }
+                sx={{
+                  fontWeight: 'bold',
+                  color:
+                    portfolioData.totalGainLossPercentage >= 0
+                      ? 'success.main'
+                      : 'error.main',
+                  fontSize: { xs: '1.125rem', sm: '1.25rem', md: '1.5rem' },
+                }}
               >
                 {portfolioData.totalGainLossPercentage.toFixed(2)}%
               </Typography>
@@ -190,17 +237,25 @@ const InvestmentsPage: React.FC = () => {
         </Box>
 
         {/* Filters */}
-        <Card sx={{ mb: 3 }}>
-          <CardContent sx={{ p: 3 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+        <Card sx={{ mb: { xs: 2, md: 3 } }}>
+          <CardContent sx={{ p: { xs: 2, md: 3 } }}>
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              spacing={{ xs: 1, sm: 2 }}
+              alignItems={{ xs: 'stretch', sm: 'center' }}
+            >
               <Typography
                 variant="body2"
                 fontWeight="medium"
                 color="text.secondary"
+                sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}
               >
-                Investment Type:
+                Filter by Type:
               </Typography>
-              <FormControl size="small" sx={{ minWidth: 200 }}>
+              <FormControl
+                size="small"
+                sx={{ minWidth: { xs: '100%', sm: 200 } }}
+              >
                 <Select
                   value={filterType}
                   onChange={e => setFilterType(e.target.value)}
@@ -208,20 +263,30 @@ const InvestmentsPage: React.FC = () => {
                   <MenuItem value="all">All Types</MenuItem>
                   {investmentTypes.map(type => (
                     <MenuItem key={type} value={type}>
-                      {type.charAt(0).toUpperCase() +
-                        type.slice(1).replace('_', ' ')}
+                      {type.replace('_', ' ').toUpperCase()}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
-            </Box>
+            </Stack>
           </CardContent>
         </Card>
 
         {/* Investments Table */}
         <Card>
-          <CardHeader>
-            <Typography variant="h6" component="h3">
+          <CardHeader
+            sx={{
+              pb: { xs: 1, md: 2 },
+              '& .MuiCardHeader-content': {
+                minWidth: 0,
+              },
+            }}
+          >
+            <Typography
+              variant={isSmallMobile ? 'h6' : 'h6'}
+              component="h3"
+              sx={{ fontWeight: 600 }}
+            >
               Investment Portfolio
               {filterType !== 'all' && (
                 <Typography
@@ -229,254 +294,275 @@ const InvestmentsPage: React.FC = () => {
                   variant="body2"
                   color="text.secondary"
                   fontWeight="normal"
+                  sx={{ fontSize: { xs: '0.875rem', md: '1rem' } }}
                 >
                   {' '}
-                  -{' '}
-                  {filterType.charAt(0).toUpperCase() +
-                    filterType.slice(1).replace('_', ' ')}
+                  - {filterType.replace('_', ' ').toUpperCase()}
                 </Typography>
               )}
             </Typography>
           </CardHeader>
           <CardContent sx={{ p: 0 }}>
             {filteredInvestments.length > 0 ? (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Symbol</TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Quantity</TableHead>
-                    <TableHead>Avg Price</TableHead>
-                    <TableHead>Current Price</TableHead>
-                    <TableHead>Investment</TableHead>
-                    <TableHead>Current Value</TableHead>
-                    <TableHead>Gain/Loss</TableHead>
-                    <TableHead>Return %</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredInvestments.map(investment => (
-                    <TableRow key={investment.id}>
-                      <TableCell>
-                        <Typography variant="body2" fontWeight="medium">
-                          {investment.symbol}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            maxWidth: 200,
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                          }}
-                        >
-                          {investment.name}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography
-                          variant="body2"
-                          sx={{ textTransform: 'capitalize' }}
-                        >
-                          {investment.type.replace('_', ' ')}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        {investment.quantity.toLocaleString()}
-                      </TableCell>
-                      <TableCell>
-                        {formatCurrency(investment.averagePrice)}
-                      </TableCell>
-                      <TableCell>
-                        {formatCurrency(investment.currentPrice)}
-                      </TableCell>
-                      <TableCell>
-                        {formatCurrency(investment.totalInvestment)}
-                      </TableCell>
-                      <TableCell>
-                        {formatCurrency(investment.currentValue)}
-                      </TableCell>
-                      <TableCell>
-                        <Typography
-                          variant="body2"
-                          color={
-                            investment.gainLoss >= 0
-                              ? 'success.main'
-                              : 'error.main'
-                          }
-                        >
-                          {formatCurrency(investment.gainLoss)}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography
-                          variant="body2"
-                          color={
-                            investment.gainLossPercentage >= 0
-                              ? 'success.main'
-                              : 'error.main'
-                          }
-                        >
-                          {investment.gainLossPercentage.toFixed(2)}%
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Box sx={{ display: 'flex', gap: 1 }}>
-                          <Button variant="outline" size="sm">
-                            Edit
-                          </Button>
-                          <Button variant="outline" size="sm">
-                            Trade
-                          </Button>
-                        </Box>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            ) : (
-              <Box sx={{ p: 6, textAlign: 'center' }}>
-                <Typography color="text.secondary">
-                  No investments found
-                </Typography>
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{ mt: 1 }}
+              isMobile ? (
+                // Mobile card view
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 1,
+                    p: { xs: 1, sm: 2 },
+                  }}
                 >
-                  {filterType !== 'all'
-                    ? 'Try selecting a different investment type or add your first investment'
-                    : 'Add your first investment to start tracking your portfolio'}
-                </Typography>
-                <Button variant="primary" sx={{ mt: 2 }}>
-                  Add Investment
-                </Button>
-              </Box>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Investment Allocation */}
-        {investments.length > 0 && (
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', lg: 'repeat(2, 1fr)' },
-              gap: 4,
-              mt: 3,
-            }}
-          >
-            <Card>
-              <CardHeader>
-                <Typography variant="h6" component="h3">
-                  Top Performers
-                </Typography>
-              </CardHeader>
-              <CardContent>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                  {investments
-                    .sort((a, b) => b.gainLossPercentage - a.gainLossPercentage)
-                    .slice(0, 5)
-                    .map(investment => (
+                  {filteredInvestments.map(investment => (
+                    <Paper
+                      key={investment.id}
+                      sx={{
+                        p: { xs: 1.5, sm: 2 },
+                        borderRadius: 2,
+                        border: '1px solid',
+                        borderColor: 'grey.200',
+                      }}
+                    >
                       <Box
-                        key={investment.id}
                         sx={{
                           display: 'flex',
                           justifyContent: 'space-between',
-                          alignItems: 'center',
+                          alignItems: 'flex-start',
+                          mb: 1,
                         }}
                       >
-                        <Box>
-                          <Typography variant="body2" fontWeight="medium">
-                            {investment.symbol}
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            {investment.name}
-                          </Typography>
-                        </Box>
-                        <Box sx={{ textAlign: 'right' }}>
-                          <Typography variant="body2" fontWeight="medium">
-                            {formatCurrency(investment.currentValue)}
-                          </Typography>
-                          <Typography
-                            variant="caption"
-                            color={
-                              investment.gainLossPercentage >= 0
-                                ? 'success.main'
-                                : 'error.main'
-                            }
-                          >
-                            {investment.gainLossPercentage.toFixed(2)}%
-                          </Typography>
-                        </Box>
-                      </Box>
-                    ))}
-                </Box>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <Typography variant="h6" component="h3">
-                  Asset Allocation
-                </Typography>
-              </CardHeader>
-              <CardContent>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                  {investmentTypes.map(type => {
-                    const typeInvestments = investments.filter(
-                      inv => inv.type === type
-                    );
-                    const typeValue = typeInvestments.reduce(
-                      (sum, inv) => sum + inv.currentValue,
-                      0
-                    );
-                    const percentage =
-                      portfolioData.currentValue > 0
-                        ? (typeValue / portfolioData.currentValue) * 100
-                        : 0;
-
-                    return (
-                      <Box
-                        key={type}
-                        sx={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                        }}
-                      >
-                        <Box>
+                        <Box sx={{ flex: 1, minWidth: 0 }}>
                           <Typography
                             variant="body2"
                             fontWeight="medium"
-                            sx={{ textTransform: 'capitalize' }}
+                            sx={{
+                              fontSize: { xs: '0.875rem', md: '1rem' },
+                              mb: 0.5,
+                            }}
                           >
-                            {type.replace('_', ' ')}
+                            {investment.symbol}
                           </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            {typeInvestments.length} investments
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            sx={{
+                              fontSize: { xs: '0.75rem', md: '0.875rem' },
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                            }}
+                          >
+                            {investment.name}
                           </Typography>
                         </Box>
-                        <Box sx={{ textAlign: 'right' }}>
-                          <Typography variant="body2" fontWeight="medium">
-                            {formatCurrency(typeValue)}
+                        <Box sx={{ textAlign: 'right', flexShrink: 0 }}>
+                          <Typography
+                            variant="body2"
+                            fontWeight="medium"
+                            sx={{
+                              fontSize: { xs: '0.875rem', md: '1rem' },
+                              mb: 0.5,
+                            }}
+                          >
+                            {formatCurrency(investment.currentValue)}
                           </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            {percentage.toFixed(1)}%
+                          <Chip
+                            label={`${investment.gainLossPercentage.toFixed(2)}%`}
+                            size="small"
+                            color={
+                              investment.gainLoss >= 0 ? 'success' : 'error'
+                            }
+                            variant="outlined"
+                            sx={{
+                              fontSize: { xs: '0.7rem', md: '0.75rem' },
+                              height: { xs: 20, md: 24 },
+                            }}
+                          />
+                        </Box>
+                      </Box>
+
+                      {/* Investment details */}
+                      <Box
+                        sx={{
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(2, 1fr)',
+                          gap: { xs: 1, md: 1.5 },
+                          mt: 1,
+                        }}
+                      >
+                        <Box>
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            sx={{ fontSize: { xs: '0.7rem', md: '0.75rem' } }}
+                          >
+                            Quantity
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            sx={{ fontSize: { xs: '0.8rem', md: '0.875rem' } }}
+                          >
+                            {investment.quantity}
+                          </Typography>
+                        </Box>
+                        <Box>
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            sx={{ fontSize: { xs: '0.7rem', md: '0.75rem' } }}
+                          >
+                            Avg Price
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            sx={{ fontSize: { xs: '0.8rem', md: '0.875rem' } }}
+                          >
+                            {formatCurrency(investment.averagePrice)}
+                          </Typography>
+                        </Box>
+                        <Box>
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            sx={{ fontSize: { xs: '0.7rem', md: '0.75rem' } }}
+                          >
+                            Current Price
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            sx={{ fontSize: { xs: '0.8rem', md: '0.875rem' } }}
+                          >
+                            {formatCurrency(investment.currentPrice)}
+                          </Typography>
+                        </Box>
+                        <Box>
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            sx={{ fontSize: { xs: '0.7rem', md: '0.75rem' } }}
+                          >
+                            Gain/Loss
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            color={
+                              investment.gainLoss >= 0
+                                ? 'success.main'
+                                : 'error.main'
+                            }
+                            sx={{ fontSize: { xs: '0.8rem', md: '0.875rem' } }}
+                          >
+                            {formatCurrency(investment.gainLoss)}
                           </Typography>
                         </Box>
                       </Box>
-                    );
-                  })}
+
+                      {/* Type chip */}
+                      <Box sx={{ mt: 1 }}>
+                        <Chip
+                          label={investment.type
+                            .replace('_', ' ')
+                            .toUpperCase()}
+                          size="small"
+                          variant="outlined"
+                          sx={{
+                            fontSize: { xs: '0.7rem', md: '0.75rem' },
+                            height: { xs: 20, md: 24 },
+                          }}
+                        />
+                      </Box>
+                    </Paper>
+                  ))}
                 </Box>
-              </CardContent>
-            </Card>
-          </Box>
-        )}
+              ) : (
+                // Desktop table view
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Symbol</TableHead>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Type</TableHead>
+                      <TableHead>Quantity</TableHead>
+                      <TableHead>Avg Price</TableHead>
+                      <TableHead>Current Price</TableHead>
+                      <TableHead>Current Value</TableHead>
+                      <TableHead>Gain/Loss</TableHead>
+                      <TableHead>Return %</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredInvestments.map(investment => (
+                      <TableRow key={investment.id}>
+                        <TableCell>
+                          <Typography variant="body2" fontWeight="medium">
+                            {investment.symbol}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>{investment.name}</TableCell>
+                        <TableCell>
+                          <Chip
+                            label={investment.type
+                              .replace('_', ' ')
+                              .toUpperCase()}
+                            size="small"
+                            variant="outlined"
+                          />
+                        </TableCell>
+                        <TableCell>{investment.quantity}</TableCell>
+                        <TableCell>
+                          {formatCurrency(investment.averagePrice)}
+                        </TableCell>
+                        <TableCell>
+                          {formatCurrency(investment.currentPrice)}
+                        </TableCell>
+                        <TableCell>
+                          {formatCurrency(investment.currentValue)}
+                        </TableCell>
+                        <TableCell>
+                          <Typography
+                            color={
+                              investment.gainLoss >= 0
+                                ? 'success.main'
+                                : 'error.main'
+                            }
+                            fontWeight="medium"
+                          >
+                            {formatCurrency(investment.gainLoss)}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            label={`${investment.gainLossPercentage.toFixed(2)}%`}
+                            size="small"
+                            color={
+                              investment.gainLoss >= 0 ? 'success' : 'error'
+                            }
+                            variant="outlined"
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Button variant="outline" size="sm">
+                            View
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )
+            ) : (
+              <Typography
+                color="text.secondary"
+                align="center"
+                sx={{ py: 4, fontSize: { xs: '0.875rem', md: '1rem' } }}
+              >
+                No investments found
+              </Typography>
+            )}
+          </CardContent>
+        </Card>
       </Container>
     </Box>
   );
